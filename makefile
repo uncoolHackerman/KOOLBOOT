@@ -1,5 +1,6 @@
 # makefile 17/12/2022 - 18/12/2022
 # makefile for building and running KOOLBOOT
+# Written by Gabriel Jickells
 
 ASM64=as
 LD64=ld
