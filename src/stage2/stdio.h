@@ -85,6 +85,8 @@ void puts(char* s) {
 void ClrScr(void) {
     for(int i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH * 2; i++)
         *(CHAR_BUFFER + i) = i & 1 ? CharColour : 0;
+    CursorX = 0;
+    CursorY = 0;
     return;
 }
 
