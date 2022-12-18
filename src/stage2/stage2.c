@@ -78,7 +78,7 @@ void main(unsigned char BootDrive) {
     if(ErrCode == KERNEL_CODE_SUCCESS) return;
     ClrScr();
     CharColour = VGA_COLOUR(VGA_WHITE, VGA_RED);
-    printf("KOOLBOOT stage 2 %s post-kernel environment\n", KOOLBOOT_VER);
+    printf("KOOLBOOT stage 2 v%s post-kernel environment\n", KOOLBOOT_VER);
     printf("Kernel program terminated with status 0x%x\n", ErrCode);
     printf("See documentation for more information\n");
     return;
