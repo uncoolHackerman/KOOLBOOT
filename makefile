@@ -13,7 +13,7 @@ CFLAGS32=-c -O2 -ffreestanding -nostdlib
 LDFLAGS32=-nostdlib
 CLIBS32=-lgcc
 
-VERSION=0.0.01
+VERSION=0.0.01a
 FLOPPY_NAME=KOOLBOOT_v$(VERSION)_floppy.img
 HDD_NAME=KOOLBOOT_v$(VERSION)_hdd.img
 
@@ -21,7 +21,6 @@ BINDIR=bin
 SRCDIR=src
 
 all: all_floppy clean all_hdd
-
 
 all_floppy: dirs disk_floppy clean
 
