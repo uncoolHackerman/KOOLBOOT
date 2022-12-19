@@ -7,6 +7,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 bool memcmp(void* ptr1, void* ptr2, uint32_t count);
 void memcpy(void* dst, void* src, uint32_t count);
@@ -47,7 +48,6 @@ void memset(void* dst, uint8_t val, uint32_t count) {
 static uint32_t MallocTable[255] = {0};
 uint32_t MallocTableSize = 0;
 uint8_t MallocIndex = 0;
-#define NULL ((void *)0)
 
 extern void* __end;
 

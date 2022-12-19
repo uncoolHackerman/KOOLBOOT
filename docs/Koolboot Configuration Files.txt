@@ -1,0 +1,15 @@
+Koolboot Configuration Files (*.kcf files) are the KOOLBOOT equivalent of COOLBOOT's system config (*.sys) files.
+*.kcf uses CB23110512v0.0.09 COOLBOOT configuration syntax and, apart from the name differences, *.sys and *.kcf files are indistinguishable.
+
+The main Koolboot Configuration File is located in ::/koolboot.kcf
+The main COOLBOOT configuration file is located in ::/coolboot.sys
+
+CB23110512v0.0.09 Syntax
+Configuration files use "options" to specify system options such as: where the kernel is located in the file system; and the syntax being used.
+Options are case sensitive and include spaces as both part of the option's name and value (i.e. :OPTION = option; and :option=option; are different).
+While this syntax doesn't officially support comments, anything that isn't specified as an option is not interpreted by (C/K)OOLBOOT.
+Options are specified with a colon at the start and a semi-colon at the end. The value and option name are seperated by an equals sign.
+an example option would look like this :KCFexample=example; where "example" is the value and "KCFexample" is the option name.
+The officially supported options are:
+:KERNEL_FILE=/path/to/kernel/file;
+:SIGNATURE=CB23110512v0.0.09;

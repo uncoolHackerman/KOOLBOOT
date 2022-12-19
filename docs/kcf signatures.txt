@@ -1,0 +1,3 @@
+Only kernel developers should worry about this
+
+KOOLBOOTv0.0.01+: CB23110512v0.0.09

@@ -1,6 +1,6 @@
-// stage2.c 17/12/2022 - 18/12/2022
+// stage2.c 17/12/2022 - 19/12/2022
 // main bootloader for KOOLBOOT
-// based on COOLBOOT
+// based on COOLBOOT v0.0.13
 // Written by Gabriel Jickells
 
 #include "stdio.h"

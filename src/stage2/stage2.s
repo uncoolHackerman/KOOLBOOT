@@ -1,8 +1,6 @@
-/*
-stage2.s 12/12/2022 - 19/12/2022
-adaptation of COOLBOOT stage2.s for KOOLBOOT
-Written by Gabriel Jickells
-*/
+# stage2.s 12/12/2022 - 19/12/2022
+# adaptation of COOLBOOT stage2.s for KOOLBOOT
+# Written by Gabriel Jickells
 
 .code16
 
@@ -13,7 +11,7 @@ Written by Gabriel Jickells
 .globl entry
 entry:
     movb %dl, (g_BootDrive)     # store the boot drive so it can be passed a parameter to the c main function
-    mov $0x01, %ah             # disable cursor
+    mov $0x01, %ah              # disable cursor
     mov $0x3F, %ch
     int $0x10
     # enter 32-bit protected mode
@@ -25,15 +23,14 @@ entry:
     ljmp $0x08, $_pmode         # step 4: reload CS to 32-bit mode
     _pmode:
         .code32
-        mov $0x10, %eax
+        mov $0x10, %eax         # set up the rest of the data segment to 32-bit mode
         mov %ax, %ds
         mov %ax, %es
         mov %ax, %fs
         mov %ax, %gs
         mov %ax, %ss
-        mov $0x0000FFF0, %esp
-        mov %esp, %ebp
-        mov $__bss_start, %edi
+        # the stack is already setup
+        mov $__bss_start, %edi  # set uninitialised variables to zero
         mov $__end, %ecx
         sub %edi, %ecx
         mov $0, %al

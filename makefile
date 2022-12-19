@@ -20,11 +20,12 @@ HDD_NAME=KOOLBOOT_v$(VERSION)_hdd.img
 BINDIR=bin
 SRCDIR=src
 
-all: all_floppy all_hdd
+all: all_floppy clean all_hdd
+
 
 all_floppy: dirs disk_floppy clean
 
-all_hdd: dirs disk_hdd clean
+all_hdd: dirs disk_hdd
 
 # puts all of the components into a single disk image
 disk_floppy: bootloader_floppy
@@ -42,6 +43,8 @@ disk_hdd: bootloader_hdd
 	mattrib -i $(BINDIR)/$(HDD_NAME) +s +h "::/koolboot.bin"
 	mcopy -i $(BINDIR)/$(HDD_NAME) $(SRCDIR)/stage2/koolboot.kcf "::/koolboot.kcf"
 	mattrib -i $(BINDIR)/$(HDD_NAME) +s "::/koolboot.kcf"
+	rm $(BINDIR)/*.bin
+	rm $(BINDIR)/*.o
 
 # makes sure there is a directory to compile into
 dirs:

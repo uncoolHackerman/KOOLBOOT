@@ -1,4 +1,4 @@
-# boot_floppy.s 17/12/2022 - 18/12/2022
+# boot_HDD.s 17/12/2022 - 19/12/2022
 # basic boot sector for KOOLBOOT on a FAT16 formatted disk
 # Written by Gabriel Jickells
 
@@ -87,7 +87,7 @@ LBA2CHS:
 ReadSectors:
     pusha
     push %cx                    # save the amount of sectors that need to be read
-    call LBA2CHS                # int $0x13 expects an LBA Address
+    call LBA2CHS                # int $0x13 expects a CHS Address
     pop %ax                     # restore the amount of sectors to be read into al (which is where int $0x13 expects them to be)
     mov $5, %di                 # di = amount of attempts left
     1:
@@ -194,7 +194,7 @@ main:
         mov (BPB_BytesPerSector), %ax   # work out the next bx value
         xor %ch, %ch
         mul %cx
-        add %ax, %bx            #will overflow after 64KiB
+        add %ax, %bx            # will overflow after 64KiB
         pop %ax                 # ax = CurrentCluster
         mov $2, %cx             # FatIndex = CurrentCluster * 2
         mul %cx                 # ax = FatIndex
@@ -218,4 +218,4 @@ main:
 .org 510                        # skip to the offset of the BIOS booting number
 .word 0xAA55                    # define the BIOS booting number
 Buffer:
-.word 0xFFF8, 0xFFFF
+.word 0xFFF8, 0xFFFF            # won't be loaded into memory by the BIOS since it is past the boot sector, only here so mtools doesn't give an error when reading the FAT
