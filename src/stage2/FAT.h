@@ -113,13 +113,12 @@ DirectoryEntry* FindFile(DirectoryEntry* Dir, char* Name) {
 
 bool ReadFile(DISK* disk, uint8_t Drive, DirectoryEntry* file, void* BufferOut)
 {
-    uint8_t* BufferOut8 = (uint8_t*)BufferOut;
     uint16_t CurrentCluster = file->FirstClusterLow;
     uint32_t FatIndex;
     do
     {
         if(!ReadSectors(disk, Drive, Cluster2LBA(CurrentCluster), g_FatData.BootSect.u_BootSector.SectorsPerCluster, BufferOut)) return false;
-        BufferOut8 += g_FatData.BootSect.u_BootSector.BytesPerSector * g_FatData.BootSect.u_BootSector.SectorsPerCluster;
+        BufferOut += g_FatData.BootSect.u_BootSector.BytesPerSector * g_FatData.BootSect.u_BootSector.SectorsPerCluster;
         if(FAT_VER == 16) {
             FatIndex = CurrentCluster * 2;
             CurrentCluster = *(uint16_t*)(g_FAT + FatIndex);
