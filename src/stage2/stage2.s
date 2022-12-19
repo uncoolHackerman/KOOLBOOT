@@ -1,5 +1,5 @@
 /*
-stage2.s 12/12/2022 - 17/12/2022
+stage2.s 12/12/2022 - 19/12/2022
 adaptation of COOLBOOT stage2.s for KOOLBOOT
 Written by Gabriel Jickells
 */
@@ -12,6 +12,7 @@ Written by Gabriel Jickells
 
 .globl entry
 entry:
+    movb %dl, (g_BootDrive)     # store the boot drive so it can be passed a parameter to the c main function
     mov $0x01, %ah             # disable cursor
     mov $0x3F, %ch
     int $0x10

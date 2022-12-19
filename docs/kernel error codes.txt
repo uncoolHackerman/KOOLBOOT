@@ -1,0 +1,15 @@
+if the kernel returns a negative value down to -31, KOOLBOOT will interpret the return value as an error that it will print to the screen
+below are the strings that will be printed for each error code.
+
+NOTE: if KOOLBOOT post-kernel prints ("Reserved"), the error code is not used in the current version of KOOLBOOT
+
+(0) 0x00000000: "Success"
+This will cause KOOLBOOT not to start up the post-kernel environment and instead just halt the CPU.
+Causes:
+- The kernel exits back to KOOLBOOT without an error being raised
+
+(-1) 0xFFFFFFFF: "System Initialisation Failure"
+This error is raised when a vital component, which is required by the kernel to continue functional operation, can't be initialised.
+Causes:
+- Hardware needed by the kernel is not functioning or not installed
+- A driver or other software in the kernel didn't start up correctly

@@ -1,4 +1,6 @@
-// FAT.h 03/12/2022
+// FAT.h 03/12/2022 - 19/12/2022
+// FAT12 and FAT16 Drivers for KOOLBOOT
+// fork of the FAT12 Driver for COOLBOOT
 // written by Gabriel Jickells
 
 #ifndef _FAT_H_
@@ -8,11 +10,6 @@
 #include "disk.h"
 #include "memory.h"
 #include "string.h"
-
-/*
-To-do:
-- write a function to change directories
-*/
 
 typedef struct BootSector
 {
@@ -74,7 +71,8 @@ bool ReadFat(DISK* disk, uint8_t Drive);
 bool FatInitialise(DISK* disk, uint8_t Drive);
 bool OpenDirectory(DISK* disk, uint8_t drive, char* path);
 
-uint32_t g_DataSectionLBA = 33;             // a good assumption to make
+uint32_t g_DataSectionLBA = 33;             // the default for KOOLBOOT on a floppy
+uint8_t FAT_VER = 12;                       // the default for KOOLBOOT on a floppy
 
 bool ReadBootRecord(DISK* disk, uint8_t Drive)
 {
@@ -120,10 +118,16 @@ bool ReadFile(DISK* disk, uint8_t Drive, DirectoryEntry* file, void* BufferOut)
     {
         if(!ReadSectors(disk, Drive, Cluster2LBA(CurrentCluster), g_FatData.BootSect.u_BootSector.SectorsPerCluster, BufferOut)) return false;
         BufferOut += g_FatData.BootSect.u_BootSector.BytesPerSector * g_FatData.BootSect.u_BootSector.SectorsPerCluster;
-        FatIndex = CurrentCluster * 3 / 2;
-        if(CurrentCluster & 1) CurrentCluster = *(uint16_t*)(g_FAT + FatIndex) >> 4;
-        else CurrentCluster = *(uint16_t*)(g_FAT + FatIndex) & 0xFFF;
-    } while (CurrentCluster < 0xFF8);
+        if(FAT_VER == 16) {
+            FatIndex = CurrentCluster * 2;
+            CurrentCluster = *(uint16_t*)(g_FAT + FatIndex);
+        }
+        else {
+            FatIndex = CurrentCluster * 3 / 2;
+            if(CurrentCluster & 1) CurrentCluster = *(uint16_t*)(g_FAT + FatIndex) >> 4;
+            else CurrentCluster = *(uint16_t*)(g_FAT + FatIndex) & 0xFFF;
+        }
+    } while ((CurrentCluster < 0xFF8 && FAT_VER == 12) || (CurrentCluster < 0xFFF8 && FAT_VER == 16));
     return true;
 }
 
@@ -150,7 +154,19 @@ bool FatInitialise(DISK* disk, uint8_t Drive) {
         return false;
     }
     g_CurrentDirectory = (DirectoryEntry*)malloc(g_FatData.BootSect.u_BootSector.RootDirEntries * sizeof(DirectoryEntry));
-    OpenDirectory(disk, Drive, "/");
+    if(!OpenDirectory(disk, Drive, "/")) {
+        printf("Could not open root directory\n");
+        return false;
+    };
+    if(memcmp(g_FatData.BootSect.u_BootSector.SystemID, "FAT12   ", 8)) {   // detect whether the disk uses FAT12 or FAT16
+        FAT_VER = 12;
+        return true;
+    }
+    if(memcmp(g_FatData.BootSect.u_BootSector.SystemID, "FAT16   ", 8)) {   // detect whether the disk uses FAT12 or FAT16
+        FAT_VER = 16;
+        return true;
+    }
+    return false;
 }
 
 bool OpenDirectory(DISK* disk, uint8_t drive, char* path) {

@@ -14,36 +14,65 @@ LDFLAGS32=-nostdlib
 CLIBS32=-lgcc
 
 VERSION=0.0.01
-DISK_NAME=KOOLBOOT_v$(VERSION).img
+FLOPPY_NAME=KOOLBOOT_v$(VERSION)_floppy.img
+HDD_NAME=KOOLBOOT_v$(VERSION)_hdd.img
 
 BINDIR=bin
 SRCDIR=src
 
-all: disk clean
+all: all_floppy all_hdd
 
-disk: dirs bootloader
-	dd if=/dev/zero of=$(BINDIR)/$(DISK_NAME) bs=512 count=2880
-	dd if=$(BINDIR)/boot.bin of=$(BINDIR)/$(DISK_NAME) conv=notrunc
-	mcopy -i $(BINDIR)/$(DISK_NAME) $(BINDIR)/koolboot.bin "::/koolboot.bin"
-	mattrib -i $(BINDIR)/$(DISK_NAME) +s +h "::/koolboot.bin"
-	mcopy -i $(BINDIR)/$(DISK_NAME) $(SRCDIR)/stage2/koolboot.kcf "::/koolboot.kcf"
-	mattrib -i $(BINDIR)/$(DISK_NAME) +s "::/koolboot.kcf"
+all_floppy: dirs disk_floppy clean
 
+all_hdd: dirs disk_hdd clean
+
+# puts all of the components into a single disk image
+disk_floppy: bootloader_floppy
+	dd if=/dev/zero of=$(BINDIR)/$(FLOPPY_NAME) bs=512 count=2880
+	dd if=$(BINDIR)/boot.bin of=$(BINDIR)/$(FLOPPY_NAME) conv=notrunc
+	mcopy -i $(BINDIR)/$(FLOPPY_NAME) $(BINDIR)/koolboot.bin "::/koolboot.bin"
+	mattrib -i $(BINDIR)/$(FLOPPY_NAME) +s +h "::/koolboot.bin"
+	mcopy -i $(BINDIR)/$(FLOPPY_NAME) $(SRCDIR)/stage2/koolboot.kcf "::/koolboot.kcf"
+	mattrib -i $(BINDIR)/$(FLOPPY_NAME) +s "::/koolboot.kcf"
+
+disk_hdd: bootloader_hdd
+	dd if=/dev/zero of=$(BINDIR)/$(HDD_NAME) bs=512 count=40960
+	dd if=$(BINDIR)/boot.bin of=$(BINDIR)/$(HDD_NAME) conv=notrunc
+	mcopy -i $(BINDIR)/$(HDD_NAME) $(BINDIR)/koolboot.bin "::/koolboot.bin"
+	mattrib -i $(BINDIR)/$(HDD_NAME) +s +h "::/koolboot.bin"
+	mcopy -i $(BINDIR)/$(HDD_NAME) $(SRCDIR)/stage2/koolboot.kcf "::/koolboot.kcf"
+	mattrib -i $(BINDIR)/$(HDD_NAME) +s "::/koolboot.kcf"
+
+# makes sure there is a directory to compile into
 dirs:
 	mkdir -p $(BINDIR)
 	rm -rf $(BINDIR)
 	mkdir -p $(BINDIR)
 
-bootloader:
-	$(ASM32) $(SRCDIR)/boot.s -o $(BINDIR)/boot.o
+# compiles and assembles the bootloader
+bootloader_floppy:
+	$(ASM32) $(SRCDIR)/boot_floppy.s -o $(BINDIR)/boot.o
 	$(LD32) -Ttext 0x7C00 -e 0x7c00 --oformat binary $(BINDIR)/boot.o -o $(BINDIR)/boot.bin
 	$(ASM32) $(SRCDIR)/stage2/stage2.s -o $(BINDIR)/stage2s.o
 	$(CC32) $(CFLAGS32) $(SRCDIR)/stage2/stage2.c -o $(BINDIR)/stage2c.o
 	$(CC32) $(LDFLAGS32) -T $(SRCDIR)/stage2/stage2.ld -Wl,-Map=$(BINDIR)/stage2.map $(BINDIR)/stage2s.o $(BINDIR)/stage2c.o -o $(BINDIR)/koolboot.bin $(CLIBS32)
 
-run:
-	qemu-system-i386 -drive file=$(BINDIR)/$(DISK_NAME),if=floppy,format=raw
+bootloader_hdd:
+	$(ASM32) $(SRCDIR)/boot_HDD.s -o $(BINDIR)/boot.o
+	$(LD32) -Ttext 0x7C00 -e 0x7c00 --oformat binary $(BINDIR)/boot.o -o $(BINDIR)/boot.bin
+	$(ASM32) $(SRCDIR)/stage2/stage2.s -o $(BINDIR)/stage2s.o
+	$(CC32) $(CFLAGS32) $(SRCDIR)/stage2/stage2.c -o $(BINDIR)/stage2c.o
+	$(CC32) $(LDFLAGS32) -T $(SRCDIR)/stage2/stage2.ld -Wl,-Map=$(BINDIR)/stage2.map $(BINDIR)/stage2s.o $(BINDIR)/stage2c.o -o $(BINDIR)/koolboot.bin $(CLIBS32)
 
+# starts the emulator with the floppy disk containing KOOLBOOT for testing
+run_floppy:
+	qemu-system-i386 -drive file=$(BINDIR)/$(FLOPPY_NAME),if=floppy,format=raw
+
+# starts the emulator with the hard disk containing KOOLBOOT for testing
+run_hdd:
+	qemu-system-i386 -drive file=$(BINDIR)/$(HDD_NAME),if=ide,format=raw
+
+# gets rid of binary files that are no longer needed
 clean:
 	rm $(BINDIR)/*.bin
 	rm $(BINDIR)/*.o

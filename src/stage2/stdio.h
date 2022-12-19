@@ -21,9 +21,22 @@ To-do:
 #define SCREEN_HEIGHT 25
 #define VGA_COLOUR(b,f) ((b << 4) | f)
 
-enum Screen_Colours {
+enum VGA_Colours {
     VGA_BLACK = 0x00,
+    VGA_BLUE = 0x01,
+    VGA_GREEN = 0x02,
+    VGA_CYAN = 0x03,
     VGA_RED = 0x04,
+    VGA_MAGENTA = 0x05,
+    VGA_BROWN = 0x06,
+    VGA_LIGHT_GREY = 0x07,
+    VGA_GREY = 0x08,
+    VGA_LIGHT_BLUE = 0x09,
+    VGA_LIME = 0x0A,
+    VGA_LIGHT_CYAN = 0x0B,
+    VGA_LIGHT_RED = 0x0C,
+    VGA_PINK = 0x0D,
+    VGA_YELLOW = 0x0E,
     VGA_WHITE = 0x0F
 };
 

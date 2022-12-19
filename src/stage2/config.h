@@ -1,5 +1,6 @@
 // config.h 18/12/2022 - 18/12/2022
 // COOLBOOT config.h implementation adapted to work with KOOLBOOT
+// uses CB23110512v0.0.09 syntax (:OPTION=value;)
 // Written by Gabriel Jickells
 
 #ifndef _CONFIG_H_
@@ -11,11 +12,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define CONFIG_SIGN "CB23110512v0.0.09"
+#define CONFIG_SIGN "CB23110512v0.0.09"             // the signature specifies which version of the (C/K)OOLBOOT config syntax is being used
 
-char* g_COOLBOOTSYS = (char*)NULL;
-char* g_COOLBOOTSYS_BAK = (char*)NULL;             // a very inefficient bug fix
-uint32_t g_COOLBOOTSIZE = 0;
+char* g_COOLBOOTSYS = (char*)NULL;                  // this should never be changed after the config has been initialised
+char* g_COOLBOOTSYS_BAK = (char*)NULL;              // this is the actual buffer that will be used by GetOption
+uint32_t g_COOLBOOTSIZE = 0;                        // this value is needed for when the BAK buffer is being reset
 
 bool InitialiseConfig(DISK* disk, uint8_t Drive);
 char* GetOption(char* option);
