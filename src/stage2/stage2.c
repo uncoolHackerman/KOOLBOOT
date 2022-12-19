@@ -10,7 +10,7 @@
 #include "config.h"
 #include <stdint.h>
 
-#define KOOLBOOT_VER "0.0.01"
+#define KOOLBOOT_VER "0.0.01a"
 #define KERNEL_START (void*)(0x20000)
 #define KERNEL_CODE_SUCCESS 0l
 
