@@ -110,7 +110,6 @@ void main(uint8_t BootDrive) {
     int (*StartKernel)(uint8_t) = KERNEL_START;
     int ErrCode = StartKernel(BootDrive);                                                   // error code will be the return value of the kernel function
     __asm("cli");                                                                           // if the kernel has set up interrupts, they should be disabled when the kernel stops running
-    ErrCode = -2;
     if(ErrCode == KERNEL_CODE_SUCCESS) return;                                              // don't clear the screen if there were no errors. Makes testing easier
     CharColour = VGA_COLOUR(VGA_RED, VGA_BLUE);
     ClrScr();
